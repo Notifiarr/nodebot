@@ -5,7 +5,7 @@
 import * as fs from 'fs';
 import fetch from 'node-fetch';
 
-let config			= fs.readFileSync('config.json', 'utf8').toString();
+let config			= fs.readFileSync('/config/config.json', 'utf8').toString();
 config				= JSON.parse(config);
 
 const userIds		= config['devDiscordUsers']; //-- Use in tester.js ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"

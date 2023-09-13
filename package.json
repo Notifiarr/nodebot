@@ -6,7 +6,7 @@
     "node-fetch": "^3.3.1",
     "node-fs": "^0.1.7"
   },
-  "name": "Notifiarr Bot",
+  "name": "notifiarr-bot",
   "version": "1.0.0",
   "main": "notifiarr.js",
   "type": "module",

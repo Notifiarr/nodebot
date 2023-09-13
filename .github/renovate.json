@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "docker:enableMajor"
+  ],
+  "packageRules": [
+   {
+     "matchDatasources": ["docker"],
+     "matchPackageNames": [
+       "golang",
+       "actions/checkout",
+       "docker/setup-buildx-action",
+       "docker/login-action",
+       "docker/metadata-action",
+       "docker/build-push-action"
+     ],
+     "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+     "automerge": true
+   }
+ ]
+}

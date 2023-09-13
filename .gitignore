@@ -1,5 +1,3 @@
-/node_modules/*
-/testing/node_modules/*
-/users/*.json
-/config.json
-/testing/config.json
+node_modules
+config.json
+/users

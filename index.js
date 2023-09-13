@@ -3,9 +3,9 @@
 */
 
 import * as fs from 'fs';
-import {Shard, ShardingManager} from 'discord.js';
+import {ShardingManager} from 'discord.js';
 
-let config			= fs.readFileSync('config.json', 'utf8').toString();
+let config			= fs.readFileSync('/config/config.json', 'utf8').toString();
 config				= JSON.parse(config);
 
 const debug         = config['debug'];
