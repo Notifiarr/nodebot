@@ -1,10 +1,8 @@
 {
 	"authProxyPass": "",
 
-	"liveNotifiarrUser": 0,
-
 	"botToken": "",
-	"devUserApikey": "",
+	"userApikey": "",
 	"devDiscordUsers": [],
 
 	"notifiarrApiURL": "",
