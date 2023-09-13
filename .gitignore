@@ -1,0 +1,5 @@
+/node_modules/*
+/testing/node_modules/*
+/users/*.json
+/config.json
+/testing/config.json
