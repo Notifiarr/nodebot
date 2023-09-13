@@ -4,42 +4,27 @@
 
 import * as fs from 'fs';
 import fetch from 'node-fetch';
+import {Client, GatewayIntentBits} from 'discord.js';
 
-let config			= fs.readFileSync('/config/config.json', 'utf8').toString();
-config				= JSON.parse(config);
-
-const userIds		= config['devDiscordUsers']; //-- Use in tester.js ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"
-const tester        = config['testing']; //-- Use in tester.js ONLY... Used to ignore everyone but "nitsua"
-
-const webhooks      = config['webhooks']; //-- send webhooks to site
-const debug         = config['debug']; //-- display debug to CLI
-const upPing        = config['upPing']; //-- send better stack / cronitor pings (live only)
-const scPing        = config['scPing']; //-- send server count pings (live only)
-let userId          = parseInt(process.argv.slice(2)[0]); //-- check if a user id is passed in for a custom user bot
-
-if (userId <= 0 || isNaN(userId)) {
-    userId = config['liveNotifiarrUser'];
-}
-
-if (debug) {
-    console.log('Using json file, ' + userId);
-}
-
-let userInfo        	= fs.readFileSync('/config/' + userId + '.json', 'utf8').toString();
-userInfo            	= JSON.parse(userInfo);
-const botToken      	= userInfo.botToken;
-const apikey        	= userInfo.apikey;
-const notifiarr     	= config['notifiarrApiURL'];
-const uptimeURL     	= config['betterUptimeURL'];
-const cronitorURL     	= config['cronitorURL'];
-const uptimeDelay   	= config['uptimeDelay'];
-const serverCountDelay 	= config['countDelay'];
-let counter         	= 0;
-let headers 			= {'Content-Type': 'application/json', 'X-password': config['authProxyPass'], 'X-server': 0};
-let data 				= {};
+const config  	  = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+const apikey      = config['userApikey'];
+const botToken    = config['botToken'];
+const userIds     = config['devDiscordUsers']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"
+const tester      = config['testing']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "nitsua"
+const webhooks    = config['webhooks']; //-- send webhooks to site
+const debug       = config['debug']; //-- output debug to CLI
+const upPing      = config['upPing']; //-- send better stack / cronitor pings
+const scPing      = config['scPing']; //-- send server count pings
+const notifiarr   = config['notifiarrApiURL'];
+const uptimeURL   = config['betterUptimeURL'];
+const cronitorURL = config['cronitorURL'];
+const uptimeDelay = config['uptimeDelay'];
+const countDelay  = config['countDelay'];
+let counter       = 0;
+let headers       = {'Content-Type': 'application/json', 'X-password': config['authProxyPass'], 'X-server': 0};
+let data          = {};
 
 //-- Everything below should match dev and live, use variables above properly!
-import {Client, GatewayIntentBits} from 'discord.js';
 
 const client = new Client({
 	intents: [
@@ -47,7 +32,7 @@ const client = new Client({
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildMembers,
-	]
+	],
 });
 
 function pingUptime() {
@@ -60,7 +45,7 @@ function pingUptime() {
 		return res.text();
 	}).then((response) => {
         if (debug) {
-            console.log('Uptime ping sent to Better Stack, #' + counter + '.');
+            console.log('Uptime ping sent, #' + counter + '.');
         }
 	});
 
@@ -139,7 +124,11 @@ function webhook(data) {
 }
 
 client.on('ready', () => {
-    if (userId == 20) {
+    if (!config['testing']) {
+        if (debug) {
+            console.log('pingUptime() and pingServerCount() intervals started');
+        }
+
         pingUptime();
 
         setInterval(function() {
@@ -148,12 +137,31 @@ client.on('ready', () => {
 
         setInterval(function() {
             pingServerCount();
-        }, (60000 * serverCountDelay));
+        }, (60000 * countDelay));
     }
 
     if (debug) {
         console.log('client.ready');
     }
+});
+
+client.on('interactionCreate', async (interaction) => {
+    data = {
+        'event': 'interactionCreate',
+        'member': interaction.user.id,
+        'server': interaction.guildId,
+		'channel': interaction.channelId,
+		'customId': interaction.customId,
+        'botToken': botToken
+    }
+
+    if (debug) {
+        console.log('client.interactionCreate->' + data['server']);
+    }
+
+	await interaction.reply({ content: 'Response sent to Notifiarr!', ephemeral: true });
+
+    webhook(data);
 });
 
 client.on('threadCreate', (thread) => {
@@ -311,9 +319,7 @@ client.on('messageDelete', (message) => {
 client.on('messageCreate', (message) => {
     //-- tester.js ONLY
     if (tester && !userIds.includes(parseInt(message.author.id))) {
-		if (debug) {
-			console.log('Ignoring non allowed user ' + message.author.username + ' (' + message.author.id + ')');
-		}
+        console.log('Ignoring non allowed user ' + message.author.username + ' (' + message.author.id + ')');
         return;
     }
 
