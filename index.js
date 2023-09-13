@@ -5,20 +5,10 @@
 import * as fs from 'fs';
 import {ShardingManager} from 'discord.js';
 
-let config			= fs.readFileSync('/config/config.json', 'utf8').toString();
-config				= JSON.parse(config);
+const config   = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
+const userInfo = JSON.parse(fs.readFileSync('/config/' + config['liveNotifiarrUser'] + '.json', 'utf8').toString());
+const manager  = new ShardingManager('./notifiarr.js', { token: userInfo.botToken });
 
-const debug         = config['debug'];
-let userInfo        = fs.readFileSync(config['absoluteUsersPath'] + config['liveNotifiarrUser'] + '.json', 'utf8').toString();
-userInfo            = JSON.parse(userInfo);
-const botToken      = userInfo.botToken;
-
-const manager = new ShardingManager('./notifiarr.js', { 
-    token: botToken
-});
-
-if (debug) {
-    manager.on('shardCreate', shard => console.log('manager.shardCreate->'+ shard.id));
-}
+if (config['debug']) manager.on('shardCreate', shard => console.log('manager.shardCreate->'+ shard.id));
 
 manager.spawn();

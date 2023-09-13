@@ -10,9 +10,6 @@
 	"notifiarrApiURL": "",
 	"betterUptimeURL": "",
 	"cronitorURL": "",
-	
-	"absoluteAppPath": "",
-	"absoluteUsersPath": "",
 
 	"webhooks": false,
 	"testing": true,

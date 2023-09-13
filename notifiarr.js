@@ -25,7 +25,7 @@ if (debug) {
     console.log('Using json file, ' + userId);
 }
 
-let userInfo        	= fs.readFileSync(config['absoluteUsersPath'] + userId + '.json', 'utf8').toString();
+let userInfo        	= fs.readFileSync('/config/' + userId + '.json', 'utf8').toString();
 userInfo            	= JSON.parse(userInfo);
 const botToken      	= userInfo.botToken;
 const apikey        	= userInfo.apikey;
