@@ -8,17 +8,16 @@ import fetch from 'node-fetch';
 let config				= fs.readFileSync('config.json', 'utf8').toString();
 config					= JSON.parse(config);
 
-const userIds       	= config['devDiscordUsers']; //-- Use in tester.js ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"
-const tester        	= config['testing']; //-- Use in tester.js ONLY... Used to ignore everyone but "nitsua"
-const apikey        	= config['devUserApikey']; //-- Hardcoded in tester.js ONLY... Used to mimic main json file for "nitsua"
+const apikey        	= config['userApikey'];
+const botToken      	= config['botToken'];
 
+const userIds       	= config['devDiscordUsers']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"
+const tester        	= config['testing']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "nitsua"
 const webhooks      	= config['webhooks']; //-- send webhooks to site
-const debug         	= config['debug']; //-- display debug to CLI
-const upPing        	= config['upPing']; //-- send better stack / cronitor pings (live only)
-const scPing        	= config['scPing']; //-- send server count pings (live only)
-let userId          	= config['liveNotifiarrUser']; //-- Hardcoded in tester.js ONLY... Used to mimic main json file for "nitsua"
+const debug         	= config['debug']; //-- output debug to CLI
+const upPing        	= config['upPing']; //-- send better stack / cronitor pings
+const scPing        	= config['scPing']; //-- send server count pings
 
-const botToken      	= config['devBotToken']; //-- Hardcoded in tester.js ONLY... Notifiarr-Dev bot
 const notifiarr     	= config['notifiarrApiURL'];
 const uptimeURL    		= config['betterUptimeURL'];
 const cronitorURL     	= config['cronitorURL'];
@@ -129,7 +128,11 @@ function webhook(data) {
 }
 
 client.on('ready', () => {
-    if (userId == 20) {
+    if (!config['testing']) {
+        if (debug) {
+            console.log('pingUptime() and pingServerCount() intervals started');
+        }
+
         pingUptime();
 
         setInterval(function() {
