@@ -3,7 +3,7 @@
 
 	"liveNotifiarrUser": 0,
 
-	"devBotToken": "",
+	"botToken": "",
 	"devUserApikey": "",
 	"devDiscordUsers": [],
 

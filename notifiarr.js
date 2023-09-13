@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import fetch from 'node-fetch';
 import {Client, GatewayIntentBits} from 'discord.js';
 
-const config  	  = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+const config  	  = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
 const apikey      = config['userApikey'];
 const botToken    = config['botToken'];
 const userIds     = config['devDiscordUsers']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"

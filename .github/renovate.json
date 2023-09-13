@@ -8,7 +8,6 @@
    {
      "matchDatasources": ["docker"],
      "matchPackageNames": [
-       "golang",
        "actions/checkout",
        "docker/setup-buildx-action",
        "docker/login-action",
