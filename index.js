@@ -2,22 +2,29 @@
     https://discordjs.guide/sharding/#how-does-sharding-work
 */
 
+import * as fn from './functions.js';
 import * as fs from 'fs';
 import {ShardingManager} from 'discord.js';
+let config = [];
 
-const configJson = fs.readFileSync('/config/config.json', 'utf8').toString();
-const config     = JSON.parse(configJson);
-
-if (config['debug']) {
-    console.log('index.js sharding starting...');
+try {
+    config = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+} catch (error) {
+    log('No config.json file found');
+    process.exit();
 }
 
-const manager = new ShardingManager('notifiarr.js', { 
-    token: config['botToken'] 
+if (fn.startup()) {
+    fn.log(startup);
+    process.exit();
+}
+
+const manager = new ShardingManager('./notifiarr.js', { 
+    totalShards: 'auto',
+    token: config.botToken,
+    timeout: -1,
+    respawn: true
 });
 
-if (config['debug']) {
-    manager.on('shardCreate', shard => console.log('manager.shardCreate->'+ shard.id));
-}
-
+manager.on('shardCreate', shard => fn.log('manager.shardCreate->'+ shard.id));
 manager.spawn();

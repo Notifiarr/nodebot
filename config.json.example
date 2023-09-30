@@ -1,6 +1,4 @@
 {
-	"authProxyPass": "",
-
 	"botToken": "",
 	"userApikey": "",
 	"devDiscordUsers": [],

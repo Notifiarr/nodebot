@@ -2,29 +2,14 @@
     https://discord.js.org/#/docs/main/stable/class/Client
 */
 
+import * as fn from './functions.js';
 import * as fs from 'fs';
-import fetch from 'node-fetch';
 import {Client, GatewayIntentBits} from 'discord.js';
 
-const config  	  = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
-const apikey      = config['userApikey'];
-const botToken    = config['botToken'];
-const userIds     = config['devDiscordUsers']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "Notifiarr" and "nitsua"
-const tester      = config['testing']; //-- Use in Notifiarr-Dev bot ONLY... Used to ignore everyone but "nitsua"
-const webhooks    = config['webhooks']; //-- send webhooks to site
-const debug       = config['debug']; //-- output debug to CLI
-const upPing      = config['upPing']; //-- send better stack / cronitor pings
-const scPing      = config['scPing']; //-- send server count pings
-const notifiarr   = config['notifiarrApiURL'];
-const uptimeURL   = config['betterUptimeURL'];
-const cronitorURL = config['cronitorURL'];
-const uptimeDelay = config['uptimeDelay'];
-const countDelay  = config['countDelay'];
-let counter       = 0;
-let headers       = {'Content-Type': 'application/json', 'X-password': config['authProxyPass'], 'X-server': 0};
-let data          = {};
-
-//-- Everything below should match dev and live, use variables above properly!
+const config    = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+let headers     = {'Content-Type': 'application/json', 'X-api-key': config['userApikey'], 'X-server': 0};
+let data        = {};
+let upCounter   = 1;
 
 const client = new Client({
 	intents: [
@@ -35,114 +20,22 @@ const client = new Client({
 	],
 });
 
-function pingUptime() {
-    if (!upPing) {
-        return;
-    }
-
-    counter++;
-	fetch(uptimeURL).then((res) => {
-		return res.text();
-	}).then((response) => {
-        if (debug) {
-            console.log('Uptime ping sent, #' + counter + '.');
-        }
-	});
-
-	fetch(cronitorURL).then((res) => {
-		return res.text();
-	}).then((response) => {
-        if (debug) {
-            console.log('Uptime ping sent to Cronitor, #' + counter + '.');
-        }
-	});
-}
-
-function pingServerCount() {
-    if (!scPing) {
-        return;
-    }
-
-	let shards = [];
-	client.shard.broadcastEval(client => [client.shard.ids, client.ws.status, client.ws.ping, client.guilds.cache.size]).then((results) => {
-		results.map((data) => {
-			shards.push({'id': data[0], 'status': data[1], 'ping': data[2], 'guilds': data[3]});
-		});
-	}).then(() => {
-		let shardData = JSON.stringify(shards);
-
-		client.shard.fetchClientValues('guilds.cache.size').then(results => {
-			const serverCount = results.reduce((acc, guildCount) => acc + guildCount, 0);
-
-			data = {
-				'count': serverCount,
-				'shardData': shardData,
-				'botToken': botToken
-			}
-
-			let headersClone = headers;
-			headersClone['X-api-key'] = apikey;
-			delete headersClone['X-server'];
-
-			fetch(notifiarr + 'system/serverCount', {
-				method: 'POST',
-				headers: headersClone,
-				body: JSON.stringify(data)
-			}).then((res) => {
-				return res.text();
-			}).then((response) => {
-				if (debug) {
-					console.log('Server count (' + serverCount + ') ping sent.');
-				}
-			});
-		});
-	});
-}
-
-function webhook(data) {
-    if (!webhooks) {
-        if (debug) {
-            console.log('webhooks disabled');
-        }
-
-        return;
-    }
-
-    headers['X-server'] = data['server'];
-
-    const endpoint = (data.event ? 'notification/discordApp' : 'user/keywords');
-
-    fetch(notifiarr + endpoint, {
-        method: 'POST', 
-        headers: headers, 
-        body: JSON.stringify(data)
-	});
-
-    if (debug) {
-        console.log('webhook sent: ' + (data.event ? data.event : data.mediarequest_eventtype));
-    }
-}
-
 client.on('ready', () => {
     if (!config['testing']) {
-        if (debug) {
-            console.log('pingUptime() and pingServerCount() intervals started');
-        }
+        fn.log('pingUptime() and pingServerCount() intervals started');
 
-        pingUptime();
+        fn.pingUptime(upCounter);
 
         setInterval(function() {
-            pingUptime();
-        }, (60000 * uptimeDelay));
+            upCounter++;
+            fn.pingUptime(upCounter);
+        }, (60000 * config['uptimeDelay']));
 
         setInterval(function() {
-            pingServerCount();
-        }, (60000 * countDelay));
+            fn.pingServerCount(client, headers);
+        }, (60000 * config['countDelay']));
     }
-
-    if (debug) {
-        console.log('client.ready');
-    }
+    fn.log('client.ready');
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -152,16 +45,14 @@ client.on('interactionCreate', async (interaction) => {
         'server': interaction.guildId,
 		'channel': interaction.channelId,
 		'customId': interaction.customId,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.interactionCreate->' + data['server']);
-    }
+    fn.log('client.interactionCreate->' + data['server']);
 
 	await interaction.reply({ content: 'Response sent to Notifiarr!', ephemeral: true });
 
-    webhook(data);
+    fn.webhook(data, headers);
 });
 
 client.on('threadCreate', (thread) => {
@@ -171,14 +62,11 @@ client.on('threadCreate', (thread) => {
         'thread': thread.id,
         'member': thread.ownerId,
         'server': thread.guildId,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.threadCreate->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.threadCreate->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('threadUpdate', (thread) => {
@@ -192,14 +80,11 @@ client.on('threadUpdate', (thread) => {
         'memberCount': thread.memberCount,
         'member': thread.ownerId,
         'server': thread.guildId,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.threadUpdate->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.threadUpdate->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('threadDelete', (thread) => {
@@ -213,14 +98,11 @@ client.on('threadDelete', (thread) => {
         'memberCount': thread.memberCount,
         'member': thread.ownerId,
         'server': thread.guildId,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.threadDelete->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.threadDelete->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('guildBanAdd', (guild, member) => {
@@ -228,14 +110,11 @@ client.on('guildBanAdd', (guild, member) => {
         'event': 'guildBanAdd',
         'member': JSON.stringify(member),
         'server': guild.id,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.guildBanAdd->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.guildBanAdd->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('guildBanRemove', (guild, member) => {
@@ -243,14 +122,11 @@ client.on('guildBanRemove', (guild, member) => {
         'event': 'guildBanRemove',
         'member': JSON.stringify(member),
         'server': guild.id,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.guildBanRemove->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.guildBanRemove->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('guildMemberRemove', (member) => {
@@ -259,14 +135,11 @@ client.on('guildMemberRemove', (member) => {
         'memberCount': member.guild.memberCount,
         'member': JSON.stringify(member),
         'server': member.guild.id,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.guildMemberRemove->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.guildMemberRemove->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('guildMemberAdd', (member) => {
@@ -275,14 +148,11 @@ client.on('guildMemberAdd', (member) => {
         'memberCount': member.guild.memberCount,
         'member': JSON.stringify(member),
         'server': member.guild.id,
-        'botToken': botToken
+        'botToken': config['botToken']
     }
 
-    if (debug) {
-        console.log('client.guildMemberAdd->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.guildMemberAdd->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('messageUpdate', (oldMessage, newMessage) => {
@@ -291,14 +161,11 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
         'newMessage': JSON.stringify(newMessage),
         'oldMessage': JSON.stringify(oldMessage),
         'server': newMessage.guild.id,
-        'botToken': botToken,
+        'botToken': config['botToken'],
     }
 
-    if (debug) {
-        console.log('client.messageUpdate->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.messageUpdate->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('messageDelete', (message) => {
@@ -306,20 +173,17 @@ client.on('messageDelete', (message) => {
         'event': 'deleteMessage',
         'message': JSON.stringify(message),
         'server': message.guild.id,
-        'botToken': botToken,
+        'botToken': config['botToken'],
     }
 
-    if (debug) {
-        console.log('client.messageDelete->' + data['server']);
-    }
-
-    webhook(data);
+    fn.log('client.messageDelete->' + data['server']);
+    fn.webhook(data, headers);
 });
 
 client.on('messageCreate', (message) => {
     //-- tester.js ONLY
-    if (tester && !userIds.includes(parseInt(message.author.id))) {
-        console.log('Ignoring non allowed user ' + message.author.username + ' (' + message.author.id + ')');
+    if (config['testing'] && !config['devDiscordUsers'].includes(parseInt(message.author.id))) {
+        fn.log('Ignoring non allowed user ' + message.author.username + ' (' + message.author.id + ')');
         return;
     }
 
@@ -332,20 +196,15 @@ client.on('messageCreate', (message) => {
                 'channel': message.channel.id,
                 'server': message.guild.id,
                 'authorRoles': Array.from(message?.member?.roles?.cache?.keys()),
-                'botToken': botToken,
+                'botToken': config['botToken'],
             }
 
-            if (debug) {
-                console.log('client.messageCreate->' + data['server']);
-            }
-
-            webhook(data);
+            fn.log('client.messageCreate->' + data['server']);
+            fn.webhook(data, headers);
         });
     }
 });
 
-if (debug) {
-    console.log('client.login');
-}
-
-client.login(botToken);
+fn.log('client.login started');
+client.login(config['botToken']);
+fn.log('client.login complete');

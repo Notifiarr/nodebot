@@ -1,24 +1,23 @@
-This setup can handle custom bot tokens based on user files. If a bot token is added to a user on the site it automatically makes a file:
-    /notifiarr-bots/user/<user-id>.json
-
-This file contains the user apikey and bot token. Once a custom bot is added, it needs started
-    service bot-users@<user-id> start
-        The unit file for this is node notifiarr.js % and is not sharded
-
-The configured user file for the live bot runs a sharded service
-    service bot-users start
-        The unit file for this is node index.js because it is sharded since it is over 2500 servers and that is required by discord
-        index.js controls the sharding automatically
-        discord.js shards every 1000 servers
-
-The json file format is
+config.json
+-------------------------
 {
-    "botToken": "<discord-bot-token>", 
-    "apikey": "<notifiarr-user-apikey>"
+	"botToken": "", //-- Token for the bot that is sent to discord for notifications to be sent from (required)
+	"userApikey": ", //-- Notifiarr apikey for the user running the bot (required)
+	"devDiscordUsers": [], //-- List of dicord ids the bot will listen to when testing = true (optional)
+
+	"notifiarrApiURL": "", //-- Notifiarr API path for webhooks to be sent to (required)
+	"betterUptimeURL": "", //-- Betteruptime heartbeat url for uptime checking (optional)
+	"cronitorURL": "", //-- Cronitor heartbeat url for uptime checking (optional)
+
+	"webhooks": true, //-- Send webhooks to the Notifiarr
+	"testing": true, //-- Testing bot
+	"debug": true, //-- Output information to the console
+	"upPing": false, //-- Send uptime pings to Betteruptime or Cronitor
+	"scPing": false, //-- Send server count information to Notifiarr for this bot token
+	"uptimeDelay": 4, //-- How long to wait between uptime pings
+	"countDelay": 10 //-- How long to wait between sending user counts
 }
 
-//---------------------------// TESTING //---------------------------//
-cd /notifiarr-bots/testing
-    node index.js
-        This will use sharding just like the main bot does
-        Make sure values are set properly in the top of the tester.js
+Usage
+-------------------------
+The container is looking for a config.json in root so it knows what token to start the bot with and what user it belongs to
