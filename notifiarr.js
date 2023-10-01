@@ -6,7 +6,7 @@ import * as fn from './functions.js';
 import * as fs from 'fs';
 import {Client, GatewayIntentBits} from 'discord.js';
 
-const config    = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+const config    = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
 let headers     = {'Content-Type': 'application/json', 'X-api-key': config['userApikey'], 'X-server': 0};
 let data        = {};
 let upCounter   = 1;
