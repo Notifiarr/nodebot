@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import * as fs from 'fs';
-const config = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+const config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
 
 export function startup() {
     log('----- config.json start -----');
