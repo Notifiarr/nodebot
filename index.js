@@ -8,7 +8,7 @@ import {ShardingManager} from 'discord.js';
 let config = [];
 
 try {
-    config = JSON.parse(fs.readFileSync('config.json', 'utf8').toString());
+    config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
 } catch (error) {
     log('No config.json file found');
     process.exit();
