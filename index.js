@@ -8,7 +8,10 @@ import {ShardingManager} from 'discord.js';
 let config = [];
 
 process.on('SIGINT', () => {
-	log('SIGINT caught');
+	log('SIGINT caught, exiting...');
+	process.exit();
+}).on('SIGTERM', () => {
+	log('SIGTERM caught, exiting...');
 	process.exit();
 });
 
