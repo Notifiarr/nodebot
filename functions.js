@@ -72,7 +72,7 @@ export function pingUptime(counter) {
 }
 
 export function pingServerCount(client, headers) {
-    if (!scPing) {
+    if (!config['scPing']) {
         log('Server count skipped, scPing = false');
         return;
     }
