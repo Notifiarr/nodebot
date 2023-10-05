@@ -8,17 +8,19 @@ import {ShardingManager} from 'discord.js';
 let config = [];
 
 process.on('SIGINT', () => {
-	log('SIGINT caught, exiting...');
+	fn.log('SIGINT caught, exiting...');
 	process.exit();
 }).on('SIGTERM', () => {
-	log('SIGTERM caught, exiting...');
+	fn.log('SIGTERM caught, exiting...');
 	process.exit();
 });
+
+fn.log('Listening for SIGINT and SIGTERM...');
 
 try {
     config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
 } catch (error) {
-    log('No config.json file found');
+    fn.log('No config.json file found');
     process.exit();
 }
 
