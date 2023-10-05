@@ -7,6 +7,11 @@ import * as fs from 'fs';
 import {ShardingManager} from 'discord.js';
 let config = [];
 
+process.on('SIGINT', () => {
+	log('SIGINT caught');
+	process.exit();
+});
+
 try {
     config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString());
 } catch (error) {
