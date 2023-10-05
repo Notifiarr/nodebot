@@ -91,7 +91,7 @@ export function pingServerCount(client, headers) {
 			data = {
 				'count': serverCount,
 				'shardData': shardData,
-				'botToken': botToken
+				'botToken': config['botToken']
 			}
 
 			let headersClone = headers;
