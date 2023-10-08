@@ -1,37 +1,37 @@
-import { ClientEvents } from "discord.js";
+import { type ClientEvents } from 'discord.js';
 
-export type notifiarrApiRequestBody = {
+export interface NotifiarrApiRequestBody {
   botToken: string;
 
   count?: number;
   shardData?: string;
 
   event?: keyof ClientEvents;
-  server?: string | null;
-  channel?: string | null;
-  customId?: string | null;
+  server?: string;
+  channel?: string;
+  customId?: string;
 
   thread?: string;
-  threadArchived?: boolean | null;
+  threadArchived?: boolean;
   threadName?: string;
-  threadParent?: string | null;
+  threadParent?: string;
 
-  member?: string | null;
-  memberCount?: number | null;
+  member?: string;
+  memberCount?: number;
 
-  message?: string | null;
-  messageCount?: number | null;
-  newMessage?: string | null;
-  oldMessage?: string | null;
-  previousMessage?: string | null;
+  message?: string;
+  messageCount?: number;
+  newMessage?: string;
+  oldMessage?: string;
+  previousMessage?: string;
 
-  mediarequest_eventtype?: "ping";
+  mediarequest_eventtype?: 'ping';
 
   authorRoles?: string[];
-};
-export type shardData = {
-  id?: number | number[] | null;
-  status?: number | number[] | null;
-  ping?: number | number[] | null;
-  guilds?: number | number[] | null;
-};
+}
+export interface Shards {
+  id?: number | number[];
+  status?: number | number[];
+  ping?: number | number[];
+  guilds?: number | number[];
+}

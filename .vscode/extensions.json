@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "aaron-bond.better-comments",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "samverschueren.linter-xo",
+        "streetsidesoftware.code-spell-checker"
+    ]
+}
