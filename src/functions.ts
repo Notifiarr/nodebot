@@ -179,7 +179,9 @@ export function getFullTimestamp() {
   const pad = (n: number, s = 2) => `${n.toString().padStart(s, '0')}`;
   const d = new Date();
 
-  return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(
-    d.getMinutes(),
-  )}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
+  return (
+    `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
+    ' ' +
+    `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`
+  );
 }
