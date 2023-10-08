@@ -8,12 +8,21 @@
   },
   "name": "notifiarr-bot",
   "version": "1.0.0",
-  "main": "notifiarr.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc --build",
+    "prestart": "npm run build",
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@tsconfig/node-lts": "^18.12.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  }
 }
