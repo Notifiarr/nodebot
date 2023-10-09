@@ -9,7 +9,7 @@
     "scripts": {
         "prebuild": "rimraf dist",
         "build": "tsc --build",
-        "prepare": "husky install",
+        "prepare": "node -e \"process.env.NODE_ENV != 'production' && process.exit(1)\" || husky install",
         "prestart": "npm run build",
         "start": "node .",
         "test": "xo"
