@@ -3,12 +3,10 @@
 */
 
 import { ShardingManager } from 'discord.js';
-import fs from 'node:fs';
 import process from 'node:process';
-import type cfg from '../config.json';
+import { fileURLToPath } from 'node:url';
+import config from './config.js';
 import * as fn from './functions.js';
-
-let config: typeof cfg;
 
 process
     .on('SIGINT', () => {
@@ -23,14 +21,6 @@ process
 
 fn.log('Listening for SIGINT and SIGTERM...');
 
-try {
-    config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString()) as typeof cfg;
-} catch {
-    fn.log('No config.json file found');
-    // eslint-disable-next-line unicorn/no-process-exit
-    process.exit();
-}
-
 const startup = fn.startup();
 if (startup) {
     fn.log(startup);
@@ -38,7 +28,7 @@ if (startup) {
     process.exit();
 }
 
-const manager = new ShardingManager('./notifiarr.js', {
+const manager = new ShardingManager(fileURLToPath(new URL('notifiarr.js', import.meta.url)), {
     totalShards: 'auto',
     token: config.botToken,
     respawn: true,

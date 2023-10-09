@@ -1,25 +1,22 @@
 import { type Client } from 'discord.js';
-import fs from 'node:fs';
-import type cfg from '../config.json';
+import config from './config.js';
 import { type NotifiarrApiRequestBody, type Shards } from './types.js';
-
-const config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString()) as typeof cfg;
 
 export function startup() {
     log('----- config.json start -----');
     log(`botToken: ${Boolean(config.botToken)}`);
-    log(`userApikey: ${Boolean(config.userApikey)}`);
+    log(`userApiKey: ${Boolean(config.userApiKey)}`);
     log(`devDiscordUsers: ${config.devDiscordUsers.length > 0}`);
 
-    log(`notifiarrApiURL: ${Boolean(config.notifiarrApiURL)}`);
-    log(`betterUptimeURL: ${Boolean(config.betterUptimeURL)}`);
-    log(`cronitorURL: ${Boolean(config.cronitorURL)}`);
+    log(`notifiarrApiUrl: ${Boolean(config.notifiarrApiUrl)}`);
+    log(`betterUptimeUrl: ${Boolean(config.betterUptimeUrl)}`);
+    log(`cronitorUrl: ${Boolean(config.cronitorUrl)}`);
 
-    log(`webhooks: ${Boolean(config.webhooks)}`);
-    log(`testing: ${Boolean(config.testing)}`);
-    log(`debug: ${Boolean(config.debug)}`);
-    log(`upPing: ${Boolean(config.upPing)}`);
-    log(`scPing: ${Boolean(config.scPing)}`);
+    log(`webhooks: ${config.webhooks}`);
+    log(`testing: ${config.testing}`);
+    log(`debug: ${config.debug}`);
+    log(`upPing: ${config.upPing}`);
+    log(`scPing: ${config.scPing}`);
     log(`uptimeDelay: ${config.uptimeDelay}`);
     log(`countDelay: ${config.countDelay}`);
     log('----- config.json end -----');
@@ -28,11 +25,11 @@ export function startup() {
         return 'CRITICAL ERROR: Config file is missing a bot token, it is required';
     }
 
-    if (!config.userApikey) {
+    if (!config.userApiKey) {
         return 'CRITICAL ERROR: Config file is missing a user apikey, it is required';
     }
 
-    if (config.upPing && !config.betterUptimeURL && !config.cronitorURL) {
+    if (config.upPing && !config.betterUptimeUrl && !config.cronitorUrl) {
         return 'CRITICAL ERROR: Betteruptime or Cronitor url is required when upPing is enabled';
     }
 }
@@ -43,8 +40,8 @@ export function pingUptime(counter: number) {
         return;
     }
 
-    if (config.betterUptimeURL) {
-        fetch(config.betterUptimeURL)
+    if (config.betterUptimeUrl) {
+        fetch(config.betterUptimeUrl)
             .then((response) => {
                 if (response.ok) {
                     log('Better uptime ping sent, #' + counter);
@@ -57,11 +54,11 @@ export function pingUptime(counter: number) {
                 log(String(error));
             });
     } else {
-        log('Uptime ping skipped, betterUptimeURL = empty');
+        log('Uptime ping skipped, betterUptimeUrl = empty');
     }
 
-    if (config.cronitorURL) {
-        fetch(config.cronitorURL)
+    if (config.cronitorUrl) {
+        fetch(config.cronitorUrl)
             .then((response) => {
                 if (response.ok) {
                     log('Cronitor uptime ping sent, #' + counter);
@@ -74,7 +71,7 @@ export function pingUptime(counter: number) {
                 log(String(error));
             });
     } else {
-        log('Uptime ping skipped, cronitorURL = empty');
+        log('Uptime ping skipped, cronitorUrl = empty');
     }
 }
 
@@ -116,7 +113,7 @@ export async function pingServerCount(client: Client, headers: Headers) {
                     const headersClone = headers;
                     headersClone.delete('X-server');
 
-                    fetch(config.notifiarrApiURL + 'system/serverCount', {
+                    fetch(config.notifiarrApiUrl + 'system/serverCount', {
                         method: 'POST',
                         headers: headersClone,
                         body: JSON.stringify(data),
@@ -149,7 +146,7 @@ export function webhook(data: NotifiarrApiRequestBody, headers: Headers) {
 
     const endpoint = data.event ? 'notification/discordApp' : 'user/keywords';
 
-    fetch(config.notifiarrApiURL + endpoint, {
+    fetch(config.notifiarrApiUrl + endpoint, {
         method: 'POST',
         headers,
         body: JSON.stringify(data),

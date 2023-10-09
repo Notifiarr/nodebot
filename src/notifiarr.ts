@@ -3,16 +3,13 @@
 */
 
 import { Client, GatewayIntentBits } from 'discord.js';
-import fs from 'node:fs';
-import type cfg from '../config.json';
+import config from './config.js';
 import * as fn from './functions.js';
 import { type NotifiarrApiRequestBody } from './types.js';
 
-const config = JSON.parse(fs.readFileSync('/config/config.json', 'utf8').toString()) as typeof cfg;
-
 const headers = new Headers();
 headers.set('Content-Type', 'application/json');
-headers.set('X-api-key', config.userApikey);
+headers.set('X-api-key', config.userApiKey);
 headers.set('X-server', '0');
 
 let data: NotifiarrApiRequestBody = { botToken: config.botToken };
