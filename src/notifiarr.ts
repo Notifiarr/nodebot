@@ -202,7 +202,6 @@ client.on('messageCreate', (message) => {
             .fetch({ before: message.id, limit: 15 })
             .then((messages) => {
                 data = {
-                    event: 'messageCreate',
                     // eslint-disable-next-line @typescript-eslint/naming-convention
                     mediarequest_eventtype: 'ping',
                     message: JSON.stringify(message),
