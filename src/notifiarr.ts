@@ -191,7 +191,7 @@ client.on('messageDelete', (message) => {
 });
 
 client.on('messageCreate', (message) => {
-    if (message.inGuild()) return;
+    if (!message.inGuild()) return;
     // -- tester.js ONLY
     if (config.testing && !config.devDiscordUsers.includes(Number(message.author.id))) {
         logger.debug(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
