@@ -7,23 +7,24 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import config from './config.js';
 import * as fn from './functions.js';
+import logger from './functions/logger.js';
 
 process
     .on('SIGINT', () => {
-        fn.log('SIGINT caught, exiting...');
+        logger.error('SIGINT caught, exiting...');
         process.exit();
     })
     .on('SIGTERM', () => {
-        fn.log('SIGTERM caught, exiting...');
+        logger.error('SIGTERM caught, exiting...');
         // eslint-disable-next-line unicorn/no-process-exit
         process.exit();
     });
 
-fn.log('Listening for SIGINT and SIGTERM...');
+logger.debug('Listening for SIGINT and SIGTERM...');
 
 const startup = fn.startup();
 if (startup) {
-    fn.log(startup);
+    logger.debug(startup);
     // eslint-disable-next-line unicorn/no-process-exit
     process.exit();
 }
@@ -35,6 +36,6 @@ const manager = new ShardingManager(fileURLToPath(new URL('notifiarr.js', import
 });
 
 manager.on('shardCreate', (shard) => {
-    fn.log('manager.shardCreate->' + shard.id);
+    logger.debug('manager.shardCreate->' + shard.id);
 });
 await manager.spawn();

@@ -29,7 +29,10 @@ const config = {
 
     webhooks: evalBool(process.env.WEBHOOKS),
     testing: evalBool(process.env.TESTING),
-    debug: evalBool(process.env.DEBUG),
+    logLevel:
+        ['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'].find((level) =>
+            new RegExp(`^${process.env.LOG_LEVEL}$`, 'i').exec(level),
+        ) ?? 'error',
     upPing: evalBool(process.env.UP_PING),
     scPing: evalBool(process.env.SC_PING),
     uptimeDelay: Number(process.env.UPTIME_DELAY ?? 4),

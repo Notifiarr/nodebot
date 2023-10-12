@@ -5,6 +5,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import config from './config.js';
 import * as fn from './functions.js';
+import logger from './functions/logger.js';
 import { type NotifiarrApiRequestBody } from './types.js';
 
 const headers = new Headers();
@@ -26,7 +27,7 @@ const client = new Client({
 
 client.on('ready', () => {
     if (!config.testing) {
-        fn.log('pingUptime() and pingServerCount() intervals started');
+        logger.debug('pingUptime() and pingServerCount() intervals started');
 
         fn.pingUptime(upCounter);
 
@@ -40,7 +41,7 @@ client.on('ready', () => {
         }, 60_000 * config.countDelay);
     }
 
-    fn.log('client.ready');
+    logger.debug('client.ready');
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -53,7 +54,7 @@ client.on('interactionCreate', async (interaction) => {
         botToken: interaction.client.token,
     };
 
-    fn.log('client.interactionCreate->' + data.server);
+    logger.debug('client.interactionCreate->' + data.server);
     if (interaction.isChatInputCommand()) {
         await interaction.reply({
             content: 'Response sent to Notifiarr!',
@@ -74,7 +75,7 @@ client.on('threadCreate', (thread) => {
         botToken: thread.client.token,
     };
 
-    fn.log('client.threadCreate->' + data.server);
+    logger.debug('client.threadCreate->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -92,7 +93,7 @@ client.on('threadUpdate', (thread) => {
         botToken: thread.client.token,
     };
 
-    fn.log('client.threadUpdate->' + data.server);
+    logger.debug('client.threadUpdate->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -110,7 +111,7 @@ client.on('threadDelete', (thread) => {
         botToken: thread.client.token,
     };
 
-    fn.log('client.threadDelete->' + data.server);
+    logger.debug('client.threadDelete->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -122,7 +123,7 @@ client.on('guildBanAdd', (ban) => {
         botToken: ban.client.token,
     };
 
-    fn.log('client.guildBanAdd->' + data.server);
+    logger.debug('client.guildBanAdd->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -134,7 +135,7 @@ client.on('guildBanRemove', (ban) => {
         botToken: ban.client.token,
     };
 
-    fn.log('client.guildBanRemove->' + data.server);
+    logger.debug('client.guildBanRemove->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -147,7 +148,7 @@ client.on('guildMemberRemove', (member) => {
         botToken: member.client.token,
     };
 
-    fn.log('client.guildMemberRemove->' + data.server);
+    logger.debug('client.guildMemberRemove->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -160,7 +161,7 @@ client.on('guildMemberAdd', (member) => {
         botToken: member.client.token,
     };
 
-    fn.log('client.guildMemberAdd->' + data.server);
+    logger.debug('client.guildMemberAdd->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -173,7 +174,7 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
         botToken: oldMessage.client.token,
     };
 
-    fn.log('client.messageUpdate->' + data.server);
+    logger.debug('client.messageUpdate->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -185,7 +186,7 @@ client.on('messageDelete', (message) => {
         botToken: message.client.token,
     };
 
-    fn.log('client.messageDelete->' + data.server);
+    logger.debug('client.messageDelete->' + data.server);
     fn.webhook(data, headers);
 });
 
@@ -193,7 +194,7 @@ client.on('messageCreate', (message) => {
     if (message.inGuild()) return;
     // -- tester.js ONLY
     if (config.testing && !config.devDiscordUsers.includes(Number(message.author.id))) {
-        fn.log(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
+        logger.debug(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
         return;
     }
 
@@ -212,15 +213,15 @@ client.on('messageCreate', (message) => {
                     botToken: message.client.token,
                 };
 
-                fn.log('client.messageCreate->' + data.server);
+                logger.debug('client.messageCreate->' + data.server);
                 fn.webhook(data, headers);
             })
-            .catch(fn.log);
+            .catch(logger.error);
     }
 });
 
-fn.log('client.login started');
+logger.debug('client.login started');
 await client.login(config.botToken);
-fn.log('client.login complete');
+logger.debug('client.login complete');
 
 export default headers;

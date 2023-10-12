@@ -1,25 +1,26 @@
 import { type Client } from 'discord.js';
 import config from './config.js';
+import logger from './functions/logger.js';
 import { type NotifiarrApiRequestBody, type Shards } from './types.js';
 
 export function startup() {
-    log('----- config.json start -----');
-    log(`botToken: ${Boolean(config.botToken)}`);
-    log(`userApiKey: ${Boolean(config.userApiKey)}`);
-    log(`devDiscordUsers: ${config.devDiscordUsers.length > 0}`);
+    logger.debug('----- config.json start -----');
+    logger.debug(`botToken: ${Boolean(config.botToken)}`);
+    logger.debug(`userApiKey: ${Boolean(config.userApiKey)}`);
+    logger.debug(`devDiscordUsers: ${config.devDiscordUsers.length > 0}`);
 
-    log(`notifiarrApiUrl: ${Boolean(config.notifiarrApiUrl)}`);
-    log(`betterUptimeUrl: ${Boolean(config.betterUptimeUrl)}`);
-    log(`cronitorUrl: ${Boolean(config.cronitorUrl)}`);
+    logger.debug(`notifiarrApiUrl: ${Boolean(config.notifiarrApiUrl)}`);
+    logger.debug(`betterUptimeUrl: ${Boolean(config.betterUptimeUrl)}`);
+    logger.debug(`cronitorUrl: ${Boolean(config.cronitorUrl)}`);
 
-    log(`webhooks: ${config.webhooks}`);
-    log(`testing: ${config.testing}`);
-    log(`debug: ${config.debug}`);
-    log(`upPing: ${config.upPing}`);
-    log(`scPing: ${config.scPing}`);
-    log(`uptimeDelay: ${config.uptimeDelay}`);
-    log(`countDelay: ${config.countDelay}`);
-    log('----- config.json end -----');
+    logger.debug(`webhooks: ${config.webhooks}`);
+    logger.debug(`testing: ${config.testing}`);
+    logger.debug(`logLevel: ${config.logLevel}`);
+    logger.debug(`upPing: ${config.upPing}`);
+    logger.debug(`scPing: ${config.scPing}`);
+    logger.debug(`uptimeDelay: ${config.uptimeDelay}`);
+    logger.debug(`countDelay: ${config.countDelay}`);
+    logger.debug('----- config.json end -----');
 
     if (!config.botToken) {
         return 'CRITICAL ERROR: Config file is missing a bot token, it is required';
@@ -36,7 +37,7 @@ export function startup() {
 
 export function pingUptime(counter: number) {
     if (!config.upPing) {
-        log('Uptime ping skipped, upPing = false');
+        logger.debug('Uptime ping skipped, upPing = false');
         return;
     }
 
@@ -44,40 +45,40 @@ export function pingUptime(counter: number) {
         fetch(config.betterUptimeUrl)
             .then((response) => {
                 if (response.ok) {
-                    log('Better uptime ping sent, #' + counter);
+                    logger.debug('Better uptime ping sent, #' + counter);
                 } else {
                     throw new Error(String(response));
                 }
             })
             .catch((error) => {
-                log('Failed to send uptime ping to better uptime');
-                log(String(error));
+                logger.error('Failed to send uptime ping to better uptime');
+                logger.error(error);
             });
     } else {
-        log('Uptime ping skipped, betterUptimeUrl = empty');
+        logger.debug('Uptime ping skipped, betterUptimeUrl = empty');
     }
 
     if (config.cronitorUrl) {
         fetch(config.cronitorUrl)
             .then((response) => {
                 if (response.ok) {
-                    log('Cronitor uptime ping sent, #' + counter);
+                    logger.debug('Cronitor uptime ping sent, #' + counter);
                 } else {
                     throw new Error(String(response));
                 }
             })
             .catch((error) => {
-                log('Failed to send uptime ping to cronitor');
-                log(String(error));
+                logger.error('Failed to send uptime ping to cronitor');
+                logger.error(error);
             });
     } else {
-        log('Uptime ping skipped, cronitorUrl = empty');
+        logger.debug('Uptime ping skipped, cronitorUrl = empty');
     }
 }
 
 export async function pingServerCount(client: Client, headers: Headers) {
     if (!config.scPing) {
-        log('Server count skipped, scPing = false');
+        logger.debug('Server count skipped, scPing = false');
         return;
     }
 
@@ -120,27 +121,27 @@ export async function pingServerCount(client: Client, headers: Headers) {
                     })
                         .then((response) => {
                             if (response.ok) {
-                                log('Server count (' + serverCount + ') ping sent');
+                                logger.debug('Server count (' + serverCount + ') ping sent');
                             } else {
                                 throw new Error(String(response));
                             }
                         })
                         .catch((error) => {
-                            log('Failed to send server count to notifiarr');
-                            log(String(error));
+                            logger.error('Failed to send server count to notifiarr');
+                            logger.error(error);
                         });
                 });
         })
-        .catch((error) => log);
+        .catch(logger.error);
 }
 
 export function webhook(data: NotifiarrApiRequestBody, headers: Headers) {
     if (!config.webhooks) {
-        log('webhooks disabled');
+        logger.debug('webhooks disabled');
         return;
     }
 
-    log('building webhook payload...');
+    logger.debug('building webhook payload...');
 
     headers.set('X-server', String(data.server));
 
@@ -153,32 +154,13 @@ export function webhook(data: NotifiarrApiRequestBody, headers: Headers) {
     })
         .then((response) => {
             if (response.ok) {
-                log('webhook sent: /' + endpoint);
+                logger.debug('webhook sent: /' + endpoint);
             } else {
                 throw new Error(String(response));
             }
         })
         .catch((error) => {
-            log('Failed to send webhook payload to notifiarr');
-            log(String(error));
+            logger.error('Failed to send webhook payload to notifiarr');
+            logger.error(error);
         });
-}
-
-export function log(line: string) {
-    if (!config.debug) {
-        return;
-    }
-
-    console.log(getFullTimestamp() + ' ' + line);
-}
-
-export function getFullTimestamp() {
-    const pad = (n: number, s = 2) => `${n.toString().padStart(s, '0')}`;
-    const d = new Date();
-
-    return (
-        `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
-        ' ' +
-        `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`
-    );
 }
