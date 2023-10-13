@@ -5,7 +5,7 @@ export default createLogger({
     transports: [
         new transports.File({
             filename: 'error.log',
-            dirname: 'logs',
+            dirname: config.logPath,
             maxsize: 5_000_000,
             maxFiles: 5,
             tailable: true,
@@ -14,7 +14,7 @@ export default createLogger({
         }),
         new transports.File({
             filename: 'combined.log',
-            dirname: 'logs',
+            dirname: config.logPath,
             maxsize: 5_000_000,
             maxFiles: 5,
             tailable: true,
