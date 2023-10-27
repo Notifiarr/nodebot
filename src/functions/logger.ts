@@ -22,7 +22,13 @@ export default createLogger({
             level: config.logLevel,
         }),
         new transports.Console({
-            format: format.combine(format.colorize(), format.simple()),
+            format: format.combine(
+                format.timestamp({
+                    format: 'YYYY-MM-DD HH:mm:ss',
+                }),
+                format.colorize(),
+                format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
+            ),
             level: config.logLevel,
         }),
     ],
