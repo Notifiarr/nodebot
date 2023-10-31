@@ -1,13 +1,9 @@
-/*
-    https://discordjs.guide/sharding/#how-does-sharding-work
-*/
-
 import { ShardingManager } from 'discord.js';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import config from './config.js';
-import * as fn from './functions.js';
 import logger from './functions/logger.js';
+import startup from './functions/startup.js';
 
 process
     .on('SIGINT', () => {
@@ -20,22 +16,19 @@ process
         process.exit();
     });
 
-logger.debug('Listening for SIGINT and SIGTERM...');
+try {
+    startup();
 
-const startup = fn.startup();
-if (startup) {
-    logger.debug(startup);
-    // eslint-disable-next-line unicorn/no-process-exit
-    process.exit();
+    const manager = new ShardingManager(fileURLToPath(new URL('notifiarr.js', import.meta.url)), {
+        totalShards: 'auto',
+        token: config.botToken,
+        respawn: true,
+    });
+
+    manager.on('shardCreate', (shard) => {
+        logger.debug('manager.shardCreate->' + shard.id);
+    });
+    await manager.spawn();
+} catch (error) {
+    logger.error('caught:', error);
 }
-
-const manager = new ShardingManager(fileURLToPath(new URL('notifiarr.js', import.meta.url)), {
-    totalShards: 'auto',
-    token: config.botToken,
-    respawn: true,
-});
-
-manager.on('shardCreate', (shard) => {
-    logger.debug('manager.shardCreate->' + shard.id);
-});
-await manager.spawn();

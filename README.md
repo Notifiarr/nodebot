@@ -14,6 +14,7 @@ CRONITOR_URL=         # Cronitor heartbeat url for uptime checking (optional)
 WEBHOOKS=             # Send webhooks to the Notifiarr
 TESTING=              # Testing bot
 LOG_LEVEL=            # Set how much output you want. Use one of: 'error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'
+LOG_PATH="logs"       # The path where log files are output, default is logs folder relative to the running application, otherwise a full path should be used
 UP_PING=              # Send uptime pings to Betteruptime or Cronitor
 SC_PING=              # Send server count information to Notifiarr for this bot token
 UPTIME_DELAY=         # How long to wait between uptime pings

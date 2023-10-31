@@ -5,7 +5,7 @@ export default createLogger({
     transports: [
         new transports.File({
             filename: 'error.log',
-            dirname: 'logs',
+            dirname: config.logPath,
             maxsize: 5_000_000,
             maxFiles: 5,
             tailable: true,
@@ -14,7 +14,7 @@ export default createLogger({
         }),
         new transports.File({
             filename: 'combined.log',
-            dirname: 'logs',
+            dirname: config.logPath,
             maxsize: 5_000_000,
             maxFiles: 5,
             tailable: true,
@@ -22,7 +22,13 @@ export default createLogger({
             level: config.logLevel,
         }),
         new transports.Console({
-            format: format.combine(format.colorize(), format.simple()),
+            format: format.combine(
+                format.timestamp({
+                    format: 'YYYY-MM-DD HH:mm:ss',
+                }),
+                format.colorize(),
+                format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
+            ),
             level: config.logLevel,
         }),
     ],
