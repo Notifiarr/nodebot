@@ -2,24 +2,24 @@ import config from '../config.js';
 import logger from './logger.js';
 
 export default function startup() {
-    logger.debug('----- config.json start -----');
-    logger.debug(`botToken: ${Boolean(config.botToken)}`);
-    logger.debug(`userApiKey: ${Boolean(config.userApiKey)}`);
-    logger.debug(`devDiscordUsers: ${config.devDiscordUsers.length > 0}`);
+    logger.info('----- config.json start -----');
+    logger.info(`botToken: ${Boolean(config.botToken)}`);
+    logger.info(`userApiKey: ${Boolean(config.userApiKey)}`);
+    logger.info(`devDiscordUsers: ${config.devDiscordUsers.length > 0}`);
 
-    logger.debug(`notifiarrApiUrl: ${Boolean(config.notifiarrApiUrl)}`);
-    logger.debug(`betterUptimeUrl: ${Boolean(config.betterUptimeUrl)}`);
-    logger.debug(`cronitorUrl: ${Boolean(config.cronitorUrl)}`);
+    logger.info(`notifiarrApiUrl: ${Boolean(config.notifiarrApiUrl)}`);
+    logger.info(`betterUptimeUrl: ${Boolean(config.betterUptimeUrl)}`);
+    logger.info(`cronitorUrl: ${Boolean(config.cronitorUrl)}`);
 
-    logger.debug(`webhooks: ${config.webhooks}`);
-    logger.debug(`testing: ${config.testing}`);
-    logger.debug(`logLevel: ${config.logLevel}`);
-    logger.debug(`logPath: ${config.logPath}`);
-    logger.debug(`upPing: ${config.upPing}`);
-    logger.debug(`scPing: ${config.scPing}`);
-    logger.debug(`uptimeDelay: ${config.uptimeDelay}`);
-    logger.debug(`countDelay: ${config.countDelay}`);
-    logger.debug('----- config.json end -----');
+    logger.info(`webhooks: ${config.webhooks}`);
+    logger.info(`testing: ${config.testing}`);
+    logger.info(`logLevel: ${config.logLevel}`);
+    logger.info(`logPath: ${config.logPath}`);
+    logger.info(`upPing: ${config.upPing}`);
+    logger.info(`scPing: ${config.scPing}`);
+    logger.info(`uptimeDelay: ${config.uptimeDelay}`);
+    logger.info(`countDelay: ${config.countDelay}`);
+    logger.info('----- config.json end -----');
 
     if (config.botToken.length === 0) {
         throw new Error('CRITICAL ERROR: Config is missing a bot token, it is required');
@@ -31,5 +31,9 @@ export default function startup() {
 
     if (config.upPing && config.betterUptimeUrl.length === 0 && config.cronitorUrl.length === 0) {
         throw new Error('CRITICAL ERROR: Betteruptime or Cronitor url is required when upPing is enabled');
+    }
+
+    if (config.webhooks && config.notifiarrApiUrl.length === 0) {
+        throw new Error('CRITICAL ERROR: Notifiarr API url is required when webhooks is enabled');
     }
 }
