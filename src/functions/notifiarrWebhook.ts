@@ -3,7 +3,7 @@ import logger from './logger.js';
 
 export default async function notifiarrWebhook(data: Record<string, string | string[] | number | boolean | undefined>) {
     if (!config.webhooks) {
-        logger.verbose('webhooks disabled');
+        logger.info('webhooks disabled');
         return;
     }
 
@@ -12,7 +12,7 @@ export default async function notifiarrWebhook(data: Record<string, string | str
     headers.set('X-api-key', config.userApiKey);
     headers.set('X-server', String(data.server));
 
-    logger.verbose('building webhook payload...');
+    logger.info('building webhook payload...');
 
     const endpoint = data.event ? 'notification/discordApp' : 'user/keywords';
     try {

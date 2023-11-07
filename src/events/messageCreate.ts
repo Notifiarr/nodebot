@@ -16,11 +16,11 @@ const event: EventModule<Events.MessageCreate> = {
         }
 
         if (config.testing && !config.devDiscordUsers.includes(Number(message.author.id))) {
-            logger.debug(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
+            logger.info(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
             return;
         }
 
-        logger.debug(`${this.name}->${message.guild.id}`);
+        logger.info(`${this.name}->${message.guild.id}`);
         try {
             const messages = await message.channel.messages.fetch({ before: message.id, limit: 15 });
             await notifiarrWebhook({

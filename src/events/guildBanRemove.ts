@@ -6,7 +6,7 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.GuildBanRemove> = {
     name: Events.GuildBanRemove,
     async execute(ban) {
-        logger.debug(`${this.name}->${ban.guild.id}`);
+        logger.info(`${this.name}->${ban.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,

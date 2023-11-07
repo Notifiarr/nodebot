@@ -6,7 +6,7 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.InteractionCreate> = {
     name: Events.InteractionCreate,
     async execute(interaction) {
-        logger.debug(`${this.name}->${interaction.guild?.id}`);
+        logger.info(`${this.name}->${interaction.guild?.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,

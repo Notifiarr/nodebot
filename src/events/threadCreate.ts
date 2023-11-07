@@ -6,7 +6,7 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.ThreadCreate> = {
     name: Events.ThreadCreate,
     async execute(thread, newlyCreated) {
-        logger.debug(`${this.name}->${thread.guild.id}`);
+        logger.info(`${this.name}->${thread.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,
