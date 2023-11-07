@@ -70,7 +70,7 @@
     "devDependencies": {
         "@tsconfig/node-lts": "^18.12.5",
         "husky": "^8.0.3",
-        "lint-staged": "^14.0.1",
+        "lint-staged": "^15.0.0",
         "npm-package-json-lint": "^7.0.0",
         "npm-package-json-lint-config-default": "^6.0.0",
         "package-changed": "^3.0.0",
@@ -82,7 +82,7 @@
         "xo": "^0.56.0"
     },
     "engines": {
-        "node": "18.x",
+        "node": "20.x",
         "npm": "10.x"
     }
 }

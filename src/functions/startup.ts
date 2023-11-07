@@ -32,4 +32,8 @@ export default function startup() {
     if (config.upPing && config.betterUptimeUrl.length === 0 && config.cronitorUrl.length === 0) {
         throw new Error('CRITICAL ERROR: Betteruptime or Cronitor url is required when upPing is enabled');
     }
+
+    if (config.webhooks && config.notifiarrApiUrl.length === 0) {
+        throw new Error('CRITICAL ERROR: Notifiarr API url is required when webhooks is enabled');
+    }
 }
