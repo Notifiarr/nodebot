@@ -14,7 +14,7 @@ const event: EventModule<Events.MessageUpdate> = {
             return;
         }
 
-        logger.debug(`${this.name}->${newMessage.guild.id}`);
+        logger.verbose(`${this.name}->${newMessage.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,

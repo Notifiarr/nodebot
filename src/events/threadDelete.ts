@@ -6,7 +6,7 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.ThreadDelete> = {
     name: Events.ThreadDelete,
     async execute(thread) {
-        logger.debug(`${this.name}->${thread.guild.id}`);
+        logger.verbose(`${this.name}->${thread.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,

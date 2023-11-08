@@ -26,7 +26,7 @@ try {
     });
 
     manager.on('shardCreate', (shard) => {
-        logger.debug('manager.shardCreate->' + shard.id);
+        logger.verbose('manager.shardCreate->' + shard.id);
     });
     await manager.spawn();
 } catch (error) {

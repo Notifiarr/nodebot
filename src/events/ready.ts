@@ -15,7 +15,7 @@ const event: EventModule<Events.ClientReady> = {
         await registerSlashCommands(client);
 
         if (!config.testing) {
-            logger.debug('pingUptime() and pingServerCount() intervals started');
+            logger.verbose('pingUptime() and pingServerCount() intervals started');
 
             let upCounter = 1;
             await pingUptime(upCounter);

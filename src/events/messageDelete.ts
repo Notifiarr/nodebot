@@ -14,7 +14,7 @@ const event: EventModule<Events.MessageDelete> = {
             return;
         }
 
-        logger.debug(`${this.name}->${message.guild.id}`);
+        logger.verbose(`${this.name}->${message.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,
