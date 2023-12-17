@@ -6,14 +6,14 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.GuildBanAdd> = {
     name: Events.GuildBanAdd,
     async execute(ban) {
-        logger.verbose(`${this.name}->${ban.guild.id}`);
+        logger.verbose(`shard ${ban.guild.shardId}: ${this.name}->${ban.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,
                 botToken: ban.client.token,
                 server: ban.guild.id,
                 user: JSON.stringify(ban.user),
-            });
+            }, ban.guild.shardId, 0);
         } catch (error) {
             logger.error('caught:', error);
         }

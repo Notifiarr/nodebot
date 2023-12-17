@@ -6,7 +6,7 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.ThreadCreate> = {
     name: Events.ThreadCreate,
     async execute(thread, newlyCreated) {
-        logger.verbose(`${this.name}->${thread.guild.id}`);
+        logger.verbose(`shard ${thread.guild.shardId}: ${this.name}->${thread.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,
@@ -15,7 +15,7 @@ const event: EventModule<Events.ThreadCreate> = {
                 member: thread.ownerId ?? undefined,
                 thread: thread.id,
                 threadParent: thread.parentId ?? undefined,
-            });
+            }, thread.guild.shardId, 0);
         } catch (error) {
             logger.error('caught:', error);
         }

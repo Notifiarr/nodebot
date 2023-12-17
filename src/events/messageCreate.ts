@@ -15,12 +15,20 @@ const event: EventModule<Events.MessageCreate> = {
             return;
         }
 
+        // @ts-ignore
+        let attachmentLinks = [];
+        if (message.attachments) {
+            message.attachments.forEach(attachment => {
+                attachmentLinks.push({name: attachment.name, url: attachment.proxyURL, type: attachment.contentType});
+            });
+        }
+
         if (config.testing && !config.devDiscordUsers.includes(Number(message.author.id))) {
             logger.verbose(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
             return;
         }
 
-        logger.verbose(`${this.name}->${message.guild.id}`);
+        logger.verbose(`shard ${message.guild.shardId}: ${this.name}->${message.guild.id}`);
         try {
             const messages = await message.channel.messages.fetch({ before: message.id, limit: 15 });
             await notifiarrWebhook({
@@ -32,7 +40,9 @@ const event: EventModule<Events.MessageCreate> = {
                 message: JSON.stringify(message),
                 previousMessage: JSON.stringify(messages),
                 authorRoles: [...(message.member?.roles.cache.keys() ?? [])],
-            });
+                // @ts-ignore
+                attachments: attachmentLinks
+            }, message.guild.shardId, 0);
         } catch (error) {
             logger.error('caught:', error);
         }

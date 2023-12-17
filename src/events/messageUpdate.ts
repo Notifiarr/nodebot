@@ -14,7 +14,15 @@ const event: EventModule<Events.MessageUpdate> = {
             return;
         }
 
-        logger.verbose(`${this.name}->${newMessage.guild.id}`);
+        // @ts-ignore
+        let attachmentLinks = [];
+        if (newMessage.attachments) {
+            newMessage.attachments.forEach(attachment => {
+                attachmentLinks.push({name: attachment.name, url: attachment.proxyURL, type: attachment.contentType});
+            });
+        }
+
+        logger.verbose(`shard ${newMessage.guild.shardId}: ${this.name}->${newMessage.guild.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,
@@ -22,7 +30,9 @@ const event: EventModule<Events.MessageUpdate> = {
                 server: newMessage.guild.id,
                 newMessage: JSON.stringify(newMessage),
                 oldMessage: JSON.stringify(oldMessage),
-            });
+                // @ts-ignore
+                attachments: attachmentLinks
+            }, newMessage.guild.shardId, 0);
         } catch (error) {
             logger.error('caught:', error);
         }

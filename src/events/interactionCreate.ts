@@ -6,7 +6,7 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.InteractionCreate> = {
     name: Events.InteractionCreate,
     async execute(interaction) {
-        logger.verbose(`${this.name}->${interaction.guild?.id}`);
+        logger.verbose(`shard ${interaction.guild?.shardId}: ${this.name}->${interaction.guild?.id}`);
         try {
             await notifiarrWebhook({
                 event: this.name,
@@ -15,7 +15,7 @@ const event: EventModule<Events.InteractionCreate> = {
                 member: interaction.user.id,
                 channel: interaction.channel?.id,
                 customId: interaction.isMessageComponent() ? interaction.customId : undefined,
-            });
+            }, interaction.guild?.shardId, 0);
         } catch (error) {
             logger.error('caught:', error);
         }
