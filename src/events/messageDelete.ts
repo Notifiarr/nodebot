@@ -14,14 +14,18 @@ const event: EventModule<Events.MessageDelete> = {
             return;
         }
 
-        logger.info(`${this.name}->${message.guild.id}`);
+        logger.verbose(`shard ${message.guild.shardId}: ${this.name}->${message.guild.id}`);
         try {
-            await notifiarrWebhook({
-                event: this.name,
-                botToken: message.client.token,
-                server: message.guild?.id,
-                message: JSON.stringify(message),
-            });
+            await notifiarrWebhook(
+                {
+                    event: this.name,
+                    botToken: message.client.token,
+                    server: message.guild?.id,
+                    message: JSON.stringify(message),
+                },
+                message.guild.shardId,
+                0,
+            );
         } catch (error) {
             logger.error('caught:', error);
         }

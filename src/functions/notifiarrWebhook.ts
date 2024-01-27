@@ -1,7 +1,11 @@
 import config from '../config.js';
 import logger from './logger.js';
 
-export default async function notifiarrWebhook(data: Record<string, string | string[] | number | boolean | undefined>) {
+export default async function notifiarrWebhook(
+    data: Record<string, string | string[] | number | boolean | undefined>,
+    shard: number | undefined,
+    request: number,
+) {
     if (!config.webhooks) {
         logger.info('webhooks disabled');
         return;
@@ -22,10 +26,10 @@ export default async function notifiarrWebhook(data: Record<string, string | str
             body: JSON.stringify(data),
         });
         if (response.ok) {
-            logger.info(`webhook sent: /${endpoint}`);
+            logger.info(`shard ${shard}: webhook sent->/${endpoint}`);
             logger.http(await response.text());
         } else {
-            logger.error(`webhook failed: /${endpoint}`);
+            logger.error(`shard ${shard}: webhook failed->/${endpoint}`);
             logger.http(await response.text());
         }
     } catch (error) {

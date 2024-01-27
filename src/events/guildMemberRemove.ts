@@ -6,15 +6,19 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.GuildMemberRemove> = {
     name: Events.GuildMemberRemove,
     async execute(member) {
-        logger.info(`${this.name}->${member.guild.id}`);
+        logger.verbose(`shard ${member.guild.shardId}: ${this.name}->${member.guild.id}`);
         try {
-            await notifiarrWebhook({
-                event: this.name,
-                botToken: member.client.token,
-                server: member.guild.id,
-                member: JSON.stringify(member),
-                memberCount: member.guild.memberCount,
-            });
+            await notifiarrWebhook(
+                {
+                    event: this.name,
+                    botToken: member.client.token,
+                    server: member.guild.id,
+                    member: JSON.stringify(member),
+                    memberCount: member.guild.memberCount,
+                },
+                member.guild.shardId,
+                0,
+            );
         } catch (error) {
             logger.error('caught:', error);
         }

@@ -20,19 +20,23 @@ const event: EventModule<Events.MessageCreate> = {
             return;
         }
 
-        logger.info(`${this.name}->${message.guild.id}`);
+        logger.verbose(`shard ${message.guild.shardId}: ${this.name}->${message.guild.id}`);
         try {
             const messages = await message.channel.messages.fetch({ before: message.id, limit: 15 });
-            await notifiarrWebhook({
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                mediarequest_eventtype: 'ping',
-                botToken: message.client.token,
-                server: message.guild.id,
-                channel: message.channel.id,
-                message: JSON.stringify(message),
-                previousMessage: JSON.stringify(messages),
-                authorRoles: [...(message.member?.roles.cache.keys() ?? [])],
-            });
+            await notifiarrWebhook(
+                {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    mediarequest_eventtype: 'ping',
+                    botToken: message.client.token,
+                    server: message.guild.id,
+                    channel: message.channel.id,
+                    message: JSON.stringify(message),
+                    previousMessage: JSON.stringify(messages),
+                    authorRoles: [...(message.member?.roles.cache.keys() ?? [])],
+                },
+                message.guild.shardId,
+                0,
+            );
         } catch (error) {
             logger.error('caught:', error);
         }

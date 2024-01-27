@@ -14,15 +14,19 @@ const event: EventModule<Events.MessageUpdate> = {
             return;
         }
 
-        logger.info(`${this.name}->${newMessage.guild.id}`);
+        logger.verbose(`shard ${newMessage.guild.shardId}: ${this.name}->${newMessage.guild.id}`);
         try {
-            await notifiarrWebhook({
-                event: this.name,
-                botToken: newMessage.client.token,
-                server: newMessage.guild.id,
-                newMessage: JSON.stringify(newMessage),
-                oldMessage: JSON.stringify(oldMessage),
-            });
+            await notifiarrWebhook(
+                {
+                    event: this.name,
+                    botToken: newMessage.client.token,
+                    server: newMessage.guild.id,
+                    newMessage: JSON.stringify(newMessage),
+                    oldMessage: JSON.stringify(oldMessage),
+                },
+                newMessage.guild.shardId,
+                0,
+            );
         } catch (error) {
             logger.error('caught:', error);
         }
