@@ -14,7 +14,8 @@ const event: EventModule<Events.MessageDelete> = {
             return;
         }
 
-        logger.verbose(`shard ${message.guild.shardId}: ${this.name}->${message.guild.id}`);
+        const webhookTimestamp = Date.now();
+        logger.verbose(`shard ${message.guild.shardId} #${webhookTimestamp}: ${this.name}->${message.guild.id}`);
         try {
             await notifiarrWebhook(
                 {
@@ -24,7 +25,7 @@ const event: EventModule<Events.MessageDelete> = {
                     message: JSON.stringify(message),
                 },
                 message.guild.shardId,
-                0,
+                webhookTimestamp,
             );
         } catch (error) {
             logger.error('caught:', error);

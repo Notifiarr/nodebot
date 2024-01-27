@@ -6,7 +6,10 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.InteractionCreate> = {
     name: Events.InteractionCreate,
     async execute(interaction) {
-        logger.verbose(`shard ${interaction.guild?.shardId}: ${this.name}->${interaction.guild?.id}`);
+        const webhookTimestamp = Date.now();
+        logger.verbose(
+            `shard ${interaction.guild?.shardId} #${webhookTimestamp}: ${this.name}->${interaction.guild?.id}`,
+        );
         try {
             await notifiarrWebhook(
                 {
@@ -18,7 +21,7 @@ const event: EventModule<Events.InteractionCreate> = {
                     customId: interaction.isMessageComponent() ? interaction.customId : undefined,
                 },
                 interaction.guild?.shardId,
-                0,
+                webhookTimestamp,
             );
         } catch (error) {
             logger.error('caught:', error);

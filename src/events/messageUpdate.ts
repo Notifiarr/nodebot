@@ -14,7 +14,8 @@ const event: EventModule<Events.MessageUpdate> = {
             return;
         }
 
-        logger.verbose(`shard ${newMessage.guild.shardId}: ${this.name}->${newMessage.guild.id}`);
+        const webhookTimestamp = Date.now();
+        logger.verbose(`shard ${newMessage.guild.shardId} #${webhookTimestamp}: ${this.name}->${newMessage.guild.id}`);
         try {
             const attachmentLinks: Array<{ name: string; url: string; type: string | undefined }> = [];
             if (newMessage.attachments) {
@@ -38,7 +39,7 @@ const event: EventModule<Events.MessageUpdate> = {
                     attachments: JSON.stringify(attachmentLinks),
                 },
                 newMessage.guild.shardId,
-                0,
+                webhookTimestamp,
             );
         } catch (error) {
             logger.error('caught:', error);

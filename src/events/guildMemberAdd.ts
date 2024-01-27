@@ -6,7 +6,8 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.GuildMemberAdd> = {
     name: Events.GuildMemberAdd,
     async execute(member) {
-        logger.verbose(`shard ${member.guild.shardId}: ${this.name}->${member.guild.id}`);
+        const webhookTimestamp = Date.now();
+        logger.verbose(`shard ${member.guild.shardId} #${webhookTimestamp}: ${this.name}->${member.guild.id}`);
         try {
             await notifiarrWebhook(
                 {
@@ -17,7 +18,7 @@ const event: EventModule<Events.GuildMemberAdd> = {
                     memberCount: member.guild.memberCount,
                 },
                 member.guild.shardId,
-                0,
+                webhookTimestamp,
             );
         } catch (error) {
             logger.error('caught:', error);
