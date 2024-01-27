@@ -16,6 +16,18 @@ const event: EventModule<Events.MessageUpdate> = {
 
         logger.verbose(`shard ${newMessage.guild.shardId}: ${this.name}->${newMessage.guild.id}`);
         try {
+            const attachmentLinks: Array<{ name: string; url: string; type: string | undefined }> = [];
+            if (newMessage.attachments) {
+                for (const attachmentCollection of newMessage.attachments) {
+                    const [_, attachment] = attachmentCollection;
+                    attachmentLinks.push({
+                        name: attachment.name,
+                        url: attachment.proxyURL,
+                        type: attachment.contentType ?? undefined,
+                    });
+                }
+            }
+
             await notifiarrWebhook(
                 {
                     event: this.name,
@@ -23,6 +35,7 @@ const event: EventModule<Events.MessageUpdate> = {
                     server: newMessage.guild.id,
                     newMessage: JSON.stringify(newMessage),
                     oldMessage: JSON.stringify(oldMessage),
+                    attachments: JSON.stringify(attachmentLinks),
                 },
                 newMessage.guild.shardId,
                 0,

@@ -22,6 +22,18 @@ const event: EventModule<Events.MessageCreate> = {
 
         logger.verbose(`shard ${message.guild.shardId}: ${this.name}->${message.guild.id}`);
         try {
+            const attachmentLinks: Array<{ name: string; url: string; type: string | undefined }> = [];
+            if (message.attachments) {
+                for (const attachmentCollection of message.attachments) {
+                    const [_, attachment] = attachmentCollection;
+                    attachmentLinks.push({
+                        name: attachment.name,
+                        url: attachment.proxyURL,
+                        type: attachment.contentType ?? undefined,
+                    });
+                }
+            }
+
             const messages = await message.channel.messages.fetch({ before: message.id, limit: 15 });
             await notifiarrWebhook(
                 {
@@ -33,6 +45,7 @@ const event: EventModule<Events.MessageCreate> = {
                     message: JSON.stringify(message),
                     previousMessage: JSON.stringify(messages),
                     authorRoles: [...(message.member?.roles.cache.keys() ?? [])],
+                    attachments: JSON.stringify(attachmentLinks),
                 },
                 message.guild.shardId,
                 0,
