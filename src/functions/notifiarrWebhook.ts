@@ -27,10 +27,10 @@ export default async function notifiarrWebhook(
         });
         if (response.ok) {
             logger.info(`shard ${shard} #${webhookTimestamp}: webhook sent->/${endpoint}`);
-            logger.http(await response.text());
+            logger.silly(await response.text());
         } else {
             logger.error(`shard ${shard} #${webhookTimestamp}: webhook failed->/${endpoint}`);
-            logger.http(await response.text());
+            logger.error(await response.text());
         }
     } catch (error) {
         logger.error('caught:', error);
