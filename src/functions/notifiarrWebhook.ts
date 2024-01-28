@@ -16,7 +16,7 @@ export default async function notifiarrWebhook(
     headers.set('X-api-key', config.userApiKey);
     headers.set('X-server', String(data.server));
 
-    logger.info('building webhook payload...');
+    logger.debug('building webhook payload...');
 
     const endpoint = data.event ? 'notification/discordApp' : 'user/keywords';
     try {
