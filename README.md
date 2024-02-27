@@ -1,5 +1,13 @@
 # Notifiarr NodeBot
 
+This is the production Notifiarr bot used on Discord. This bot handles all the chat binds and sends
+them to the website (different code) where they're parsed, processed and actioned. We run one nodebot
+instance for the main Notifiarr bot (with many shards), and one instance for each custom bot.
+
+You may run this bot yourself via Docker if you wish to 
+[use a custom bot](https://notifiarr.wiki/en/Website/Discord/CustomBot) in your Discord server.
+
+
 ## .env
 
 ```env
