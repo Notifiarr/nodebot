@@ -47,6 +47,8 @@ const event: EventModule<Events.MessageCreate> = {
                     previousMessage: JSON.stringify(messages),
                     authorRoles: [...(message.member?.roles.cache.keys() ?? [])],
                     attachments: JSON.stringify(attachmentLinks),
+                    ownerId: message.thread?.ownerId ?? 0,
+                    thread: JSON.stringify(message.thread),
                 },
                 message.guild.shardId,
                 webhookTimestamp,
