@@ -12,7 +12,7 @@ const event: EventModule<Events.ClientReady> = {
         logger.info(`Ready! Logged in as ${client.user.tag}`);
 
         if (!config.testing) {
-            logger.info('pingUptime() and pingServerCount() intervals started');
+            logger.verbose('pingUptime() and pingServerCount() intervals started');
 
             let upCounter = 1;
             await pingUptime(upCounter);

@@ -16,7 +16,7 @@ const event: EventModule<Events.MessageCreate> = {
         }
 
         if (config.testing && !config.devDiscordUsers.includes(Number(message.author.id))) {
-            logger.info(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
+            logger.verbose(`Ignoring non allowed user ${message.author.username} (${message.author.id})`);
             return;
         }
 
