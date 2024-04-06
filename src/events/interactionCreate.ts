@@ -19,6 +19,8 @@ const event: EventModule<Events.InteractionCreate> = {
                     member: interaction.user.id,
                     channel: interaction.channel?.id,
                     customId: interaction.isMessageComponent() ? interaction.customId : undefined,
+                    interactionId: interaction.id,
+                    interactionToken: interaction.token
                 },
                 interaction.guild?.shardId,
                 webhookTimestamp,
