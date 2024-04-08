@@ -6,13 +6,8 @@ import { type EventModule } from '../types.js';
 const event: EventModule<Events.MessageDelete> = {
     name: Events.MessageDelete,
     async execute(message) {
-        if (message.author?.bot) {
-            logger.verbose('skipping delete webhook, bot message');
-            return;
-        }
-
-        if (!message.inGuild()) {
-            logger.verbose('skipping delete webhoo, message is not in a guild');
+        if (!message.guild?.id) {
+            logger.error('skipping delete webhook, missing guild id');
             return;
         }
 
