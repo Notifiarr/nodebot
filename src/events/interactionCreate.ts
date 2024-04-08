@@ -19,6 +19,7 @@ const event: EventModule<Events.InteractionCreate> = {
                     member: interaction.user.id,
                     channel: interaction.channel?.id,
                     customId: interaction.isMessageComponent() ? interaction.customId : undefined,
+                    optionId: interaction.isSelectMenu() ? interaction.values[0] : undefined,
                     interactionId: interaction.id,
                     interactionToken: interaction.token
                 },
