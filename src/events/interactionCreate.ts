@@ -1,7 +1,7 @@
 import { Events } from 'discord.js';
 import logger from '../functions/logger.js';
 import notifiarrWebhook from '../functions/notifiarrWebhook.js';
-import { type EventModule } from '../types.js';
+import type { EventModule } from '../types.d.js';
 
 const event: EventModule<Events.InteractionCreate> = {
     name: Events.InteractionCreate,
@@ -21,7 +21,7 @@ const event: EventModule<Events.InteractionCreate> = {
                     customId: interaction.isMessageComponent() ? interaction.customId : undefined,
                     optionId: interaction.isSelectMenu() ? interaction.values[0] : undefined,
                     interactionId: interaction.id,
-                    interactionToken: interaction.token
+                    interactionToken: interaction.token,
                 },
                 interaction.guild?.shardId,
                 webhookTimestamp,

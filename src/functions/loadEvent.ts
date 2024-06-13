@@ -1,5 +1,5 @@
-import { type Client, type ClientEvents } from 'discord.js';
-import { type EventModule } from '../types.js';
+import type { Client, ClientEvents } from 'discord.js';
+import type { EventModule } from '../types.d.js';
 import logger from './logger.js';
 
 export default async function loadEvent(client: Client, eventFile: string, eventsPath: URL) {

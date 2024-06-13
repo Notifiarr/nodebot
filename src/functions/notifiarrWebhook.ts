@@ -29,8 +29,17 @@ export default async function notifiarrWebhook(
             logger.info(`shard ${shard} #${webhookTimestamp}: webhook sent->/${endpoint}`);
             logger.silly(await response.text());
         } else {
-            const error = JSON.parse(await response.text());
-            const errorResponse = typeof error === 'object' ? JSON.stringify({environment: error.environment, code: error.code, apikey: error.details.apikey, error: error.details.response}) : response.text();
+            const error = JSON.parse(await response.text()) as {
+                environment: string;
+                code: string;
+                details: { apikey: string; response: string };
+            };
+            const errorResponse = JSON.stringify({
+                environment: error.environment,
+                code: error.code,
+                apikey: error.details.apikey,
+                error: error.details.response,
+            });
             logger.error(`shard ${shard} #${webhookTimestamp}: webhook failed->/${endpoint}`);
             logger.error(errorResponse);
         }

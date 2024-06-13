@@ -1,6 +1,6 @@
-import { type Client } from 'discord.js';
+import type { Client } from 'discord.js';
 import config from '../config.js';
-import { type Shards } from '../types.js';
+import type { Shards } from '../types.d.js';
 import logger from './logger.js';
 
 export default async function pingServerCount(client: Client) {
@@ -45,7 +45,7 @@ export default async function pingServerCount(client: Client) {
         headers.set('X-api-key', config.userApiKey);
 
         try {
-            const response = await fetch(config.notifiarrApiUrl + 'system/serverCount', {
+            const response = await fetch(`${config.notifiarrApiUrl}system/serverCount`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({

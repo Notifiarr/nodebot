@@ -2,7 +2,7 @@ import { Events } from 'discord.js';
 import config from '../config.js';
 import logger from '../functions/logger.js';
 import notifiarrWebhook from '../functions/notifiarrWebhook.js';
-import { type EventModule } from '../types.js';
+import type { EventModule } from '../types.d.js';
 
 const event: EventModule<Events.MessageCreate> = {
     name: Events.MessageCreate,

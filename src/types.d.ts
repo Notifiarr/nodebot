@@ -1,4 +1,4 @@
-import { type Awaitable, type ClientEvents } from 'discord.js';
+import type { Awaitable, ClientEvents } from 'discord.js';
 
 export interface EventModule<K extends keyof ClientEvents> {
     name: K;

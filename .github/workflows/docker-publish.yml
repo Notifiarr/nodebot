@@ -2,11 +2,11 @@ name: Docker
 
 on:
   push:
-    branches: [ "main", "unstable" ]
+    branches: ['main', 'unstable']
     # Publish semver tags as releases.
-    tags: [ 'v*.*' ]
+    tags: ['v*.*']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -16,7 +16,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read

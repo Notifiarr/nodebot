@@ -3,7 +3,7 @@ import config from '../config.js';
 import logger from '../functions/logger.js';
 import pingServerCount from '../functions/pingServerCount.js';
 import pingUptime from '../functions/pingUptime.js';
-import { type EventModule } from '../types.js';
+import type { EventModule } from '../types.d.js';
 
 const event: EventModule<Events.ClientReady> = {
     name: Events.ClientReady,
