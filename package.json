@@ -32,7 +32,7 @@
         "lint-staged": "^15.0.0",
         "package-changed": "^3.0.0",
         "prettier": "^3.0.3",
-        "prettier-plugin-organize-imports": "^3.2.3",
+        "prettier-plugin-organize-imports": "^4.0.0",
         "prettier-plugin-packagejson": "^2.4.6",
         "rimraf": "^5.0.5",
         "typescript": "^5.2.2",
