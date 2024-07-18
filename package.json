@@ -9,7 +9,7 @@
     "scripts": {
         "prebuild": "rimraf dist || true",
         "build": "tsc --build",
-        "prepare": "node .husky/install.mjs",
+        "prepare": "node .husky/install.mjs || true",
         "prestart": "npm run build",
         "start": "node .",
         "test": "eslint"
