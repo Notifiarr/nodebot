@@ -1,1 +1,1 @@
-npx --no package-changed
+npx --no -- package-changed --lockfile
