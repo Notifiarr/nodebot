@@ -7,9 +7,9 @@
     "type": "module",
     "main": "dist/index.js",
     "scripts": {
-        "prebuild": "rimraf dist",
+        "prebuild": "rimraf dist || true",
         "build": "tsc --build",
-        "prepare": "node -e \"process.env.NODE_ENV != 'production' && process.exit(1)\" || husky",
+        "prepare": "node .husky/install.mjs",
         "prestart": "npm run build",
         "start": "node .",
         "test": "eslint"
